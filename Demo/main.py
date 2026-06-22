@@ -1,7 +1,7 @@
 import os
 import re
 
-APP_NAME = input("Enter the name off app: ")
+APP_NAME = input("Enter the name of app: ")
 
 def GetProjectName():
     root_folder = os.getcwd()
@@ -76,7 +76,7 @@ home_html_content = f"""{{% extends 'base.html' %}}
 {{% endblock header %}}
 
 {{% block content %}}
-<p>This is the {APP_NAME}content.</p>
+<p>This is the {APP_NAME} content.</p>
 {{% endblock %}}
 
 {{% block script %}} 
@@ -118,7 +118,6 @@ urlpatterns = [
 ]
 """
 
-
 # Create folders
 os.makedirs(os.path.dirname(BASE_HTML), exist_ok=True)
 os.makedirs(TEMPLATES_DIR, exist_ok=True)
@@ -126,39 +125,39 @@ os.makedirs(STATIC_CSS_DIR, exist_ok=True)
 os.makedirs(STATIC_JS_DIR, exist_ok=True)
 os.makedirs(MEDIA_DIR, exist_ok=True)
 
-# Write files
+# Write files (Added encoding='utf-8' safely across all files)
 if not os.path.exists(BASE_HTML):
-    with open(BASE_HTML, 'w') as f:
+    with open(BASE_HTML, 'w', encoding='utf-8') as f:
         f.write(base_html_content)
         print(f"✅ Created: {BASE_HTML}")
 else:
     print(f"⚠️ Skipped: {BASE_HTML} already exists.")
 
-with open(HOME_HTML, 'w') as f:
+with open(HOME_HTML, 'w', encoding='utf-8') as f:
     f.write(home_html_content)
     print(f"✅ Created: {HOME_HTML}")
 
-with open(STYLE_CSS, 'w') as f:
+with open(STYLE_CSS, 'w', encoding='utf-8') as f:
     f.write(style_css_content)
     print(f"✅ Created: {STYLE_CSS}")
 
-with open(SCRIPT_JS, 'w') as f:
+with open(SCRIPT_JS, 'w', encoding='utf-8') as f:
     f.write(script_js_content)
     print(f"✅ Created: {SCRIPT_JS}")
 
-with open(VIEWS_FILE, 'w') as f:
+with open(VIEWS_FILE, 'w', encoding='utf-8') as f:
     f.write(views_py_content)
     print(f"✅ Created: {VIEWS_FILE}")
 
 if not os.path.exists(URLS_FILE):
-    with open(URLS_FILE, 'w') as f:
+    with open(URLS_FILE, 'w', encoding='utf-8') as f:
         f.write(urls_py_content)
         print(f"✅ Created: {URLS_FILE}")
 else:
     print(f"⚠️ Skipped: {URLS_FILE} already exists.")
 
 if os.path.exists(PROJECT_SETTINGS):
-    with open(PROJECT_SETTINGS, 'r') as f:
+    with open(PROJECT_SETTINGS, 'r', encoding='utf-8') as f:
         settings = f.read()
 
     # ✅ Check if APP_NAME is already in INSTALLED_APPS
@@ -176,7 +175,7 @@ if os.path.exists(PROJECT_SETTINGS):
             new_installed_apps = before + new_body + after
             settings = settings.replace(match.group(0), new_installed_apps)
 
-            with open(PROJECT_SETTINGS, 'w') as f:
+            with open(PROJECT_SETTINGS, 'w', encoding='utf-8') as f:
                 f.write(settings)
             print(f"✅ '{APP_NAME}' added to INSTALLED_APPS")
         else:
@@ -185,7 +184,7 @@ if os.path.exists(PROJECT_SETTINGS):
     # ✅ TEMPLATES['DIRS'] update
     if re.search(r"'DIRS':\s*\[\s*\]", settings):
         settings = re.sub(r"'DIRS':\s*\[\s*\]", "'DIRS': ['templates']", settings)
-        with open(PROJECT_SETTINGS, 'w') as f:
+        with open(PROJECT_SETTINGS, 'w', encoding='utf-8') as f:
             f.write(settings)
         print("✅ TEMPLATES['DIRS'] updated to ['templates']")
     else:
@@ -193,7 +192,7 @@ if os.path.exists(PROJECT_SETTINGS):
 
     # ✅ MEDIA settings
     if "MEDIA_URL" not in settings:
-        with open(PROJECT_SETTINGS, 'a') as f:
+        with open(PROJECT_SETTINGS, 'a', encoding='utf-8') as f:
             f.write("\n# Media configuration\n")
             f.write("MEDIA_URL = '/media/'\n")
             f.write("MEDIA_ROOT = BASE_DIR / 'media'\n")
@@ -201,11 +200,9 @@ if os.path.exists(PROJECT_SETTINGS):
     else:
         print("⚠️ MEDIA settings already exist in settings.py")
 
-    
-
 # Add static media support in project-level urls.py
 if os.path.exists(PROJECT_URLS):
-    with open(PROJECT_URLS, 'r') as f:
+    with open(PROJECT_URLS, 'r', encoding='utf-8') as f:
         urls_content = f.read()
 
     include_import_needed = 'from django.urls import path, include' not in urls_content
@@ -251,14 +248,10 @@ if settings.DEBUG:
         print("⚠️ Media URL handler already exists in urls.py")
 
     # Save final result
-    with open(PROJECT_URLS, 'w') as f:
+    with open(PROJECT_URLS, 'w', encoding='utf-8') as f:
         f.write(urls_content)
 
 else:
     print("❌ Project-level urls.py not found.")
 
-
 print("\n🎉 Django app setup completed successfully!")
-# print(f"1. Add `path('', include('{APP_NAME}.urls'))` to your project-level urls.py")
-# print(f"2. Ensure `{APP_NAME}` is in INSTALLED_APPS")
-
